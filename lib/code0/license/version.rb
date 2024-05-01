@@ -2,6 +2,6 @@
 
 module Code0
   class License
-    VERSION = "0.1.0.pre.release.testing"
+    VERSION = "0.1.0"
   end
 end
