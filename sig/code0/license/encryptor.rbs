@@ -1,0 +1,13 @@
+module Code0
+  class License
+    class Encryptor
+      @key: OpenSSL::PKey::RSA
+      attr_accessor key: OpenSSL::PKey::RSA
+
+      def initialize: (OpenSSL::PKey::RSA) -> Encryptor
+
+      def decrypt: (String) -> String
+      def encrypt: (String) -> String
+    end
+  end
+end

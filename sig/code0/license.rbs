@@ -1,0 +1,29 @@
+module Code0
+  class License
+    ATTRIBUTES: Array[Symbol]
+    VERSION: String
+
+    self.@encryption_key: OpenSSL::PKey::RSA
+    @data: Hash[String, any]
+
+    def self.encryption_key=: (OpenSSL::PKey::RSA) -> void
+
+    def self.export: (License, String) -> String
+
+    def self.load: (String) -> License
+
+    def self.encryptor: -> Encryptor
+
+    attr_reader data: Hash[Symbol, any]
+
+    def in_active_time?: -> bool
+
+    def valid?: -> bool
+
+    private
+
+    def assign_attributes: (Hash[String, any]) -> void
+
+    def parse_date: (String) -> Date?
+  end
+end

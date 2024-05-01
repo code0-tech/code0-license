@@ -1,0 +1,15 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+.idea/
+
+license_key.key
+license_key.pub
+
+# rspec failure tracking
+.rspec_status

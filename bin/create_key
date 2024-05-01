@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "code0/license"
+
+# Generate a key pair. You should do this only once.
+key_pair = OpenSSL::PKey::RSA.generate(4096)
+
+# Write it to a file to use in the license generation application.
+File.write("license_key.key", key_pair.to_pem)
+
+# Extract the public key.
+public_key = key_pair.public_key
+# Write it to a file to ship along with the main application.
+File.write("license_key.pub", public_key.to_pem)

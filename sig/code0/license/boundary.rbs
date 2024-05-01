@@ -1,0 +1,16 @@
+module Code0
+  class License
+    module Boundary
+      BOUNDARY_END: Regexp
+      BOUNDARY_START: Regexp
+
+      def self.add_boundary: (String, String) -> String
+
+      def self.pad: (String, Integer) -> String
+
+      private
+
+      def self.remove_boundary: (String) -> String
+    end
+  end
+end
