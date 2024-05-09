@@ -42,6 +42,7 @@ module Code0
 
       def decrypt(data)
         raise KeyError, "Provided key is not a public key." unless key.public?
+        raise DecryptionError, "Provided data is nil" if data.nil?
 
         json_data = Base64.decode64(data.chomp)
 
