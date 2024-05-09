@@ -20,7 +20,7 @@ module Code0
 
         def remove_boundary(data)
           after_boundary = data.split(BOUNDARY_START).last
-          after_boundary.split(BOUNDARY_END).first
+          after_boundary&.split(BOUNDARY_END)&.first
         end
 
         private

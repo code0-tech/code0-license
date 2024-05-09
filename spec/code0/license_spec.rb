@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Code0::License do
+  described_class.encryption_key = OpenSSL::PKey::RSA.generate(2048)
+
   let(:license_data) { default_license_data }
   let(:license) { described_class.new(license_data) }
   let(:default_license_data) do
@@ -29,6 +31,49 @@ RSpec.describe Code0::License do
         options: {}
       }
     )
+  end
+
+  describe ".load" do
+    subject(:load) { described_class.load(data) }
+
+    shared_examples "raises decryption error" do |example_name|
+      it(example_name) { expect { load }.to raise_error(Code0::License::Encryptor::DecryptionError) }
+    end
+
+    context "when data is nil" do
+      let(:data) { nil }
+
+      it { expect { load }.to raise_error(Code0::License::ValidationError) }
+    end
+
+    it_behaves_like "raises decryption error", "when data is an empty string" do
+      let(:data) { "" }
+    end
+
+    it_behaves_like "raises decryption error", "when data is a start boundary" do
+      let(:data) do
+        <<~DATA
+          --------BEGIN CODE0 LICENSE--------
+        DATA
+      end
+    end
+
+    it_behaves_like "raises decryption error", "when data is an end boundary" do
+      let(:data) do
+        <<~DATA
+          ---------END CODE0 LICENSE---------
+        DATA
+      end
+    end
+
+    it_behaves_like "raises decryption error", "when data is a boundary" do
+      let(:data) do
+        <<~DATA
+          --------BEGIN CODE0 LICENSE--------
+          ---------END CODE0 LICENSE---------
+        DATA
+      end
+    end
   end
 
   describe "#valid?" do
