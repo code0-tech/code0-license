@@ -7,7 +7,7 @@ require "code0/license"
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
 
-key_file = File.read("license_key.#{ARGV.shift}")
+key_file = File.read("keys/license_encryption_key_test.#{ARGV.shift}")
 key = OpenSSL::PKey::RSA.new(key_file)
 
 Code0::License.encryption_key = key

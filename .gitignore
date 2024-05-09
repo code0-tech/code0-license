@@ -8,8 +8,8 @@
 /tmp/
 .idea/
 
-license_key.key
-license_key.pub
+keys/*
+!keys/.keep
 
 # rspec failure tracking
 .rspec_status
