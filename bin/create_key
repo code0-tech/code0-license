@@ -7,7 +7,7 @@ require "code0/license"
 # Generate a key pair. You should do this only once.
 key_pair = OpenSSL::PKey::RSA.generate(4096)
 
-environment = ARGV.shift || 'test'
+environment = ARGV.shift || "test"
 
 # Write it to a file to use in the license generation application.
 File.write("keys/license_encryption_key_#{environment}.key", key_pair.to_pem)
