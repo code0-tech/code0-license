@@ -18,11 +18,13 @@ module Code0
 
     def in_active_time?: -> bool
 
+    def restricted?: (Symbol) -> bool
+
     def valid?: -> bool
 
     private
 
-    def assign_attributes: (Hash[String, any]) -> void
+    def assign_attributes: (Hash[Symbol, any]) -> void
 
     def parse_date: (String) -> Date?
   end
