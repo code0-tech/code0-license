@@ -7,11 +7,11 @@ RSpec.describe Code0::License do
   let(:license) { described_class.new(license_data) }
   let(:default_license_data) do
     {
-      "licensee" => { "company" => "Code0" },
-      "start_date" => "2024-05-01",
-      "end_date" => "2025-05-01",
-      "restrictions" => { "users" => 1 },
-      "options" => {}
+      licensee: { company: "Code0" },
+      start_date: "2024-05-01",
+      end_date: "2025-05-01",
+      restrictions: { users: 1 },
+      options: {}
     }
   end
 
@@ -24,10 +24,10 @@ RSpec.describe Code0::License do
   it "data returns hash of attributes" do
     expect(license.data).to match(
       {
-        licensee: { "company" => "Code0" },
+        licensee: { company: "Code0" },
         start_date: Date.new(2024, 5, 1),
         end_date: Date.new(2025, 5, 1),
-        restrictions: { "users" => 1 },
+        restrictions: { users: 1 },
         options: {}
       }
     )
@@ -82,39 +82,39 @@ RSpec.describe Code0::License do
     it { is_expected.to be true }
 
     context "when missing licensee" do
-      let(:license_data) { default_license_data.except("licensee") }
+      let(:license_data) { default_license_data.except(:licensee) }
 
       it { is_expected.to be false }
     end
 
     context "when missing licensee is invalid" do
-      let(:license_data) { default_license_data.merge("licensee" => "") }
+      let(:license_data) { default_license_data.merge(licensee: "") }
 
       it { is_expected.to be false }
     end
 
     context "when missing licensee is empty" do
-      let(:license_data) { default_license_data.merge("licensee" => {}) }
+      let(:license_data) { default_license_data.merge(licensee: {}) }
 
       it { is_expected.to be false }
     end
 
     context "when missing start date" do
-      let(:license_data) { default_license_data.except("start_date") }
+      let(:license_data) { default_license_data.except(:start_date) }
 
       it { is_expected.to be false }
     end
 
     context "when missing end date" do
-      let(:license_data) { default_license_data.except("end_date") }
+      let(:license_data) { default_license_data.except(:end_date) }
 
       it { is_expected.to be false }
     end
 
     context "when missing end date with missing end date allowed" do
       let(:license_data) do
-        data = default_license_data.except("end_date")
-        data["options"].merge!("allow_missing_end_date" => true)
+        data = default_license_data.except(:end_date)
+        data[:options].merge!(allow_missing_end_date: true)
         data
       end
 
@@ -126,53 +126,63 @@ RSpec.describe Code0::License do
     subject { license.in_active_time? }
 
     context "when start is after today" do
-      let(:license_data) { default_license_data.merge("start_date" => Date.today + 1) }
+      let(:license_data) { default_license_data.merge(start_date: Date.today + 1) }
 
       it { is_expected.to be false }
     end
 
     context "when start is today" do
-      let(:license_data) { default_license_data.merge("start_date" => Date.today) }
+      let(:license_data) { default_license_data.merge(start_date: Date.today) }
 
       it { is_expected.to be true }
     end
 
     context "when start is before today" do
-      let(:license_data) { default_license_data.merge("start_date" => Date.today - 1) }
+      let(:license_data) { default_license_data.merge(start_date: Date.today - 1) }
 
       it { is_expected.to be true }
     end
 
     context "when end is after today" do
-      let(:license_data) { default_license_data.merge("end_date" => Date.today + 1) }
+      let(:license_data) { default_license_data.merge(end_date: Date.today + 1) }
 
       it { is_expected.to be true }
     end
 
     context "when end is today" do
-      let(:license_data) { default_license_data.merge("end_date" => Date.today) }
+      let(:license_data) { default_license_data.merge(end_date: Date.today) }
 
       it { is_expected.to be true }
     end
 
     context "when end is before today" do
-      let(:license_data) { default_license_data.merge("end_date" => Date.today - 1) }
+      let(:license_data) { default_license_data.merge(end_date: Date.today - 1) }
 
       it { is_expected.to be false }
     end
 
     context "when end is not set" do
-      let(:license_data) { default_license_data.merge("end_date" => nil) }
+      let(:license_data) { default_license_data.merge(end_date: nil) }
 
       it { is_expected.to be false }
     end
 
     context "when end is not set and missing end allowed" do
       let(:license_data) do
-        default_license_data.merge("end_date" => nil, "options" => { "allow_missing_end_date" => true })
+        default_license_data.merge(end_date: nil, options: { allow_missing_end_date: true })
       end
 
       it { is_expected.to be true }
+    end
+  end
+
+  describe "#restricted?" do
+    it "returns true if restriction is set" do
+      expect(license.restricted?(:users)).to be true
+    end
+
+    it "returns fals if restriction is not set" do
+      expect(license.restricted?(:user_count)).to be false
     end
   end
 end

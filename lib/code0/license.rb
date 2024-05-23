@@ -28,7 +28,7 @@ module Code0
 
         decrypted_license = encryptor.decrypt(data)
 
-        new(JSON.parse(decrypted_license))
+        new(JSON.parse(decrypted_license, symbolize_names: true))
       rescue JSON::ParserError
         raise ValidationError, "License data is invalid JSON"
       end
@@ -60,17 +60,21 @@ module Code0
     def valid?
       return false if !licensee || !licensee.is_a?(Hash) || licensee.empty?
       return false if !start_date || !start_date.is_a?(Date)
-      return false if (!end_date || !end_date.is_a?(Date)) && !options["allow_missing_end_date"]
+      return false if (!end_date || !end_date.is_a?(Date)) && !options[:allow_missing_end_date]
 
       true
     end
 
     def in_active_time?
       return false if start_date > Date.today
-      return true if !end_date && options["allow_missing_end_date"]
-      return false if !end_date && !options["allow_missing_end_date"]
+      return true if !end_date && options[:allow_missing_end_date]
+      return false if !end_date && !options[:allow_missing_end_date]
 
       end_date >= Date.today
+    end
+
+    def restricted?(attribute)
+      restrictions.key?(attribute)
     end
 
     def data
@@ -82,15 +86,15 @@ module Code0
     attr_writer(*ATTRIBUTES)
 
     def assign_attributes(data)
-      %w[start_date end_date].each do |property|
+      %i[start_date end_date].each do |property|
         value = data[property]
         value = parse_date(data[property]) unless data[property].is_a?(Date)
         send("#{property}=", value)
       end
 
-      send("licensee=", data["licensee"])
-      send("restrictions=", data["restrictions"] || {})
-      send("options=", data["options"] || {})
+      send("licensee=", data[:licensee])
+      send("restrictions=", data[:restrictions] || {})
+      send("options=", data[:options] || {})
     end
 
     def parse_date(str)
