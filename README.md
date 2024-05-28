@@ -32,11 +32,11 @@ Code0::License.encryption_key = private_key
 # create a license
 license = Code0::License.new(
   {
-    'licensee' => { 'company' => 'Code0' }, # content of licensee can be as you want, it just can't be empty
-    'start_date' => '2024-05-01', # when is the first date where this license is valid?
-    'end_date' => '2025-05-01', # until when is the license valid?
-    'restrictions' => {}, # content can be as you wish, can be used to semantically store some restrictions that are evaluated by your application
-    'options' => {}, # content can be as you wish, can be used to semantically provide some options of this license
+    licensee: { company: 'Code0' }, # content of licensee can be as you want, it just can't be empty
+    start_date: '2024-05-01', # when is the first date where this license is valid?
+    end_date: '2025-05-01', # until when is the license valid?
+    restrictions: {}, # content can be as you wish, can be used to semantically store some restrictions that are evaluated by your application
+    options: {}, # content can be as you wish, can be used to semantically provide some options of this license
   }
 )
 
@@ -59,10 +59,10 @@ Code0::License.encryption_key = public_key
 # load the license
 license = Code0::License.load(File.read('license.txt'))
 
-# exit if license is valid or outside of the valid time
+# exit if license is not valid or outside of the valid time
 exit unless license.valid?
 exit unless license.in_active_time?
 
 # for example, exit if users exceed licensed amount
-exit if User.count > license.restrictions['user_count']
+exit if license.restricted?(:user_count) && User.count > license.restrictions[:user_count]
 ```
