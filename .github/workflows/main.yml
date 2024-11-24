@@ -14,7 +14,10 @@ jobs:
     strategy:
       matrix:
         ruby:
+          - '3.0.0' # using 3.0.0 instead of latest patch as 3.0.0 is the minimum specified in the gemspec
+          - '3.1.6'
           - '3.2.2'
+          - '3.3.6'
 
     steps:
     - uses: actions/checkout@v3
