@@ -3,16 +3,15 @@ name: Push Gem
 on:
   push:
     tags:
-      - v*
+      - '*'
 
 jobs:
-  release:
+  rubygems:
     runs-on: ubuntu-latest
 
     environment: rubygems
 
     permissions:
-      contents: write
       id-token: write
 
     steps:
@@ -24,6 +23,12 @@ jobs:
           ruby-version: '3.2.2'
       - name: Install gems
         run: bundle install
+      - name: Set version
+        run: sed -i "s/VERSION = \"0.0.0\"/VERSION = \"${{ github.ref_name }}\"/" lib/code0/license/version.rb && bundle
 
       # Release
-      - uses: rubygems/release-gem@v1
+      - uses: rubygems/configure-rubygems-credentials@v1.0.0
+      - name: Publish gem
+        run: bundle exec rake release:rubygem_push
+      - name: Wait for release
+        run: gem exec rubygems-await pkg/*.gem
