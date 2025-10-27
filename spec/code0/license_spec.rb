@@ -3,13 +3,16 @@
 RSpec.describe Code0::License do
   described_class.encryption_key = OpenSSL::PKey::RSA.generate(2048)
 
+  let(:start_date) { Date.today.prev_day }
+  let(:end_date) { Date.today.next_day }
+
   let(:license_data) { default_license_data }
   let(:license) { described_class.new(license_data) }
   let(:default_license_data) do
     {
       licensee: { company: "Code0" },
-      start_date: "2024-05-01",
-      end_date: "2025-05-01",
+      start_date: start_date.strftime("%Y-%m-%d"),
+      end_date: end_date.strftime("%Y-%m-%d"),
       restrictions: { users: 1 },
       options: {}
     }
@@ -25,8 +28,8 @@ RSpec.describe Code0::License do
     expect(license.data).to match(
       {
         licensee: { company: "Code0" },
-        start_date: Date.new(2024, 5, 1),
-        end_date: Date.new(2025, 5, 1),
+        start_date: start_date,
+        end_date: end_date,
         restrictions: { users: 1 },
         options: {}
       }

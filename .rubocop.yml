@@ -34,3 +34,6 @@ Layout/LineLength:
 
 RSpec/ExampleLength:
   Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
