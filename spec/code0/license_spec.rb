@@ -30,6 +30,7 @@ RSpec.describe Code0::License do
         licensee: { company: "Code0" },
         start_date: start_date,
         end_date: end_date,
+        grace_period_days: 0,
         restrictions: { users: 1 },
         options: {}
       }
@@ -123,6 +124,24 @@ RSpec.describe Code0::License do
 
       it { is_expected.to be true }
     end
+
+    context "when grace_period_days is not an integer" do
+      let(:license_data) { default_license_data.merge(grace_period_days: "5") }
+
+      it { is_expected.to be false }
+    end
+
+    context "when grace_period_days is an integer" do
+      let(:license_data) { default_license_data.merge(grace_period_days: 5) }
+
+      it { is_expected.to be true }
+    end
+
+    context "when grace_period_days is zero" do
+      let(:license_data) { default_license_data.merge(grace_period_days: 0) }
+
+      it { is_expected.to be true }
+    end
   end
 
   describe "#in_active_time?" do
@@ -160,6 +179,32 @@ RSpec.describe Code0::License do
 
     context "when end is before today" do
       let(:license_data) { default_license_data.merge(end_date: Date.today - 1) }
+
+      it { is_expected.to be false }
+    end
+
+    context "when end is before today but within grace period" do
+      let(:license_data) { default_license_data.merge(end_date: Date.today - 3, grace_period_days: 5) }
+
+      it { is_expected.to be true }
+    end
+
+    context "when end is before today and exactly at grace period boundary" do
+      let(:license_data) { default_license_data.merge(end_date: Date.today - 5, grace_period_days: 5) }
+
+      it { is_expected.to be true }
+    end
+
+    context "when end is before today and past grace period" do
+      let(:license_data) { default_license_data.merge(end_date: Date.today - 6, grace_period_days: 5) }
+
+      it { is_expected.to be false }
+    end
+
+    context "when end is before today within grace period but grace period disabled" do
+      subject { license.in_active_time?(allow_grace_period: false) }
+
+      let(:license_data) { default_license_data.merge(end_date: Date.today - 3, grace_period_days: 5) }
 
       it { is_expected.to be false }
     end

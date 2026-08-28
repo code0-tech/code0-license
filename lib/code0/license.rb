@@ -47,6 +47,7 @@ module Code0
     ATTRIBUTES = %i[
       start_date
       end_date
+      grace_period_days
       licensee
       restrictions
       options
@@ -61,16 +62,17 @@ module Code0
       return false if !licensee || !licensee.is_a?(Hash) || licensee.empty?
       return false if !start_date || !start_date.is_a?(Date)
       return false if (!end_date || !end_date.is_a?(Date)) && !options[:allow_missing_end_date]
+      return false if grace_period_days.nil? || !grace_period_days.is_a?(Integer)
 
       true
     end
 
-    def in_active_time?
+    def in_active_time?(allow_grace_period: true)
       return false if start_date > Date.today
       return true if !end_date && options[:allow_missing_end_date]
       return false if !end_date && !options[:allow_missing_end_date]
 
-      end_date >= Date.today
+      end_date + (allow_grace_period ? grace_period_days : 0) >= Date.today
     end
 
     def restricted?(attribute)
@@ -92,6 +94,7 @@ module Code0
         send("#{property}=", value)
       end
 
+      send("grace_period_days=", data[:grace_period_days] || 0)
       send("licensee=", data[:licensee])
       send("restrictions=", data[:restrictions] || {})
       send("options=", data[:options] || {})
